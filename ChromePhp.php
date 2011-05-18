@@ -356,7 +356,11 @@ class ChromePhp
             try {
                 $value = $property->getValue($object);
             } catch (ReflectionException $e) {
-                $value = 'only PHP 5.3 can access private/protected properties';
+                //Only PHP 5.3 can access private/protected properties
+                //PHP has a special behavior when casting objects to array, 
+                //It gives us access to all the private/protected properties but prefixed with \0
+                $arrTmp = (array) $object;
+                $value = $arrTmp["\0" . get_class($object) . "\0" . $property->getName()];
             }
 
             // same instance as parent object
